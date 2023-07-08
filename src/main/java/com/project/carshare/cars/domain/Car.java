@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,12 +31,15 @@ public class Car {
     private String fuelConsumption;
     @Enumerated(EnumType.STRING)
     private FuelType fuelType;
+    private BigDecimal pricePerDay;
     private int horsePower;
+    private boolean available;
     @OneToMany(mappedBy = "car", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<CarImage> carImages = new ArrayList<>();
-    private boolean available;
+    @OneToMany(mappedBy = "car", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Rent> rents = new ArrayList<>();
 
-    public void addCarImage(CarImage carImage){
+    public void addCarImage(CarImage carImage) {
         carImages.add(carImage);
     }
 }

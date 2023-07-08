@@ -17,6 +17,12 @@ public class CarsEndpoint {
 
     private final CarsService carsService;
 
+    @GetMapping()
+    public ResponseEntity<List<CarInfoResponseDto>> getAvailableCars(){
+        return ResponseEntity.ok(carsService.getAvailableCars());
+    }
+
+    //ADMIN
     @GetMapping("/all")
     public ResponseEntity<List<CarInfoResponseDto>> getAllCars() {
         return ResponseEntity.ok(carsService.getAllCars());

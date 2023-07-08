@@ -30,6 +30,23 @@ public class CarsService {
                 .equals("ADMIN");
     }
 
+    public List<CarInfoResponseDto> getAvailableCars() {
+        return carsRepository.findAll().stream().filter(Car::isAvailable)
+                .map(it -> CarInfoResponseDto.builder()
+                        .id(it.getId())
+                        .make(it.getMake())
+                        .model(it.getModel())
+                        .carType(it.getCarType())
+                        .fuelConsumption(it.getFuelConsumption())
+                        .fuelType(it.getFuelType())
+                        .horsePower(it.getHorsePower())
+                        .pricePerDay(it.getPricePerDay())
+                        .available(it.isAvailable())
+                        .build())
+                .toList();
+    }
+
+    //ADMIN
     public List<CarInfoResponseDto> getAllCars() {
         if (!isAdmin()) {
             throw new RuntimeException("You must be admin to do that");
@@ -43,6 +60,7 @@ public class CarsService {
                         .fuelConsumption(it.getFuelConsumption())
                         .fuelType(it.getFuelType())
                         .horsePower(it.getHorsePower())
+                        .pricePerDay(it.getPricePerDay())
                         .available(it.isAvailable())
                         .build())
                 .toList();
@@ -59,6 +77,7 @@ public class CarsService {
                 .carType(request.getCarType())
                 .fuelConsumption(request.getFuelConsumption())
                 .fuelType(request.getFuelType())
+                .pricePerDay(request.getPricePerDay())
                 .horsePower(request.getHorsePower())
                 .available(false)
                 .build();
@@ -79,6 +98,7 @@ public class CarsService {
         car.setCarType(request.getCarType());
         car.setFuelConsumption(request.getFuelConsumption());
         car.setFuelType(request.getFuelType());
+        car.setPricePerDay(request.getPricePerDay());
         car.setHorsePower(request.getHorsePower());
 
         carsRepository.save(car);

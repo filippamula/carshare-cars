@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,5 +20,6 @@ public class CarRequestDto {
     private CarType carType;
     private String fuelConsumption;
     private FuelType fuelType;
+    private BigDecimal pricePerDay;
     private Integer horsePower;
 }
