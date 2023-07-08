@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddCarRequestDto {
+public class CarRequestDto {
 
     private String make;
     private String model;

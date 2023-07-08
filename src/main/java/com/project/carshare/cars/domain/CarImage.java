@@ -17,6 +17,7 @@ import java.util.UUID;
 public class CarImage {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private byte[] image;
     private String fileName;

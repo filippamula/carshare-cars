@@ -21,6 +21,7 @@ import java.util.UUID;
 public class Car {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String make;
     private String model;
@@ -33,4 +34,8 @@ public class Car {
     @OneToMany(mappedBy = "car", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<CarImage> carImages = new ArrayList<>();
     private boolean available;
+
+    public void addCarImage(CarImage carImage){
+        carImages.add(carImage);
+    }
 }

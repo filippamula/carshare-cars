@@ -1,13 +1,17 @@
 package com.project.carshare.cars.context.cars;
 
-import com.project.carshare.cars.context.cars.dto.AddCarRequestDto;
+import com.project.carshare.cars.context.cars.dto.CarRequestDto;
 import com.project.carshare.cars.context.cars.dto.CarInfoResponseDto;
 import com.project.carshare.cars.domain.Car;
+import com.project.carshare.cars.domain.CarImage;
+import com.project.carshare.cars.domain.CarImageRepository;
 import com.project.carshare.cars.domain.CarsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -17,16 +21,17 @@ import java.util.UUID;
 public class CarsService {
 
     private final CarsRepository carsRepository;
+    private final CarImageRepository carImageRepository;
 
     @SuppressWarnings("unchecked")
-    private boolean isAdmin(){
-        return ((Map<String,String>) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+    private boolean isAdmin() {
+        return ((Map<String, String>) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
                 .get("role")
                 .equals("ADMIN");
     }
 
     public List<CarInfoResponseDto> getAllCars() {
-        if(!isAdmin()){
+        if (!isAdmin()) {
             throw new RuntimeException("You must be admin to do that");
         }
 
@@ -43,13 +48,12 @@ public class CarsService {
                 .toList();
     }
 
-    public void addCar(AddCarRequestDto request) {
-        if(!isAdmin()){
+    public void addCar(CarRequestDto request) {
+        if (!isAdmin()) {
             throw new RuntimeException("You must be admin to do that");
         }
 
         var car = Car.builder()
-                .id(UUID.randomUUID())
                 .make(request.getMake())
                 .model(request.getModel())
                 .carType(request.getCarType())
@@ -60,5 +64,61 @@ public class CarsService {
                 .build();
 
         carsRepository.save(car);
+    }
+
+    public void modifyCar(CarRequestDto request, UUID cardId) {
+        if (!isAdmin()) {
+            throw new RuntimeException("You must be admin to do that");
+        }
+
+        var car = carsRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Car not found"));
+
+        car.setMake(request.getMake());
+        car.setModel(request.getModel());
+        car.setCarType(request.getCarType());
+        car.setFuelConsumption(request.getFuelConsumption());
+        car.setFuelType(request.getFuelType());
+        car.setHorsePower(request.getHorsePower());
+
+        carsRepository.save(car);
+    }
+
+    public void addCarImage(MultipartFile file, UUID carId) {
+        if (!isAdmin()) {
+            throw new RuntimeException("You must be admin to do that");
+        }
+
+        var car = carsRepository.findById(carId)
+                .orElseThrow(() -> new RuntimeException("Car not found"));
+
+        var carImage = CarImage.builder()
+                .image(extractBytes(file))
+                .car(car)
+                .fileName(file.getOriginalFilename())
+                .build();
+        carImageRepository.save(carImage);
+        car.addCarImage(carImage);
+        carsRepository.save(car);
+    }
+
+    public void changeCarAvailability(UUID carId) {
+        if(!isAdmin()){
+            throw new RuntimeException("You must be admin to do that");
+        }
+
+        var car = carsRepository.findById(carId)
+                .orElseThrow(() -> new RuntimeException("Car not found"));
+
+        car.setAvailable(true);
+        carsRepository.save(car);
+    }
+
+    private byte[] extractBytes(MultipartFile file) {
+        try {
+            return file.getBytes();
+        }catch (IOException e){
+            throw new RuntimeException("Error while extracting bytes from file");
+        }
     }
 }
