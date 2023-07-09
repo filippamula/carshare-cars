@@ -1,10 +1,12 @@
 package com.project.carshare.cars.context.rent;
 
 import com.project.carshare.cars.context.rent.dto.RentRequestDto;
+import com.project.carshare.cars.context.rent.dto.RentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,6 +21,17 @@ public class RentsEndpoint {
             @PathVariable UUID carId,
             @RequestBody RentRequestDto request) {
         rentsService.rent(request, carId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<RentResponseDto>> getUserRents() {
+        return ResponseEntity.ok(rentsService.userRents());
+    }
+
+    @PostMapping("/{rentId}/cancel")
+    public ResponseEntity<Void> cancelRent(@PathVariable UUID rentId) {
+        rentsService.cancelRent(rentId);
         return ResponseEntity.ok().build();
     }
 }
