@@ -50,7 +50,7 @@ public class RentsService {
         rentRepository.save(rent);
     }
 
-    public List<RentResponseDto> userRents() {
+    public List<RentResponseDto> rents() {
         var userId = getUserId();
 
         return rentRepository.findRentsByUserId(userId)
@@ -70,17 +70,37 @@ public class RentsService {
 
         var rent = rentRepository.findRentById(rentId)
                 .orElseThrow(() -> new RuntimeException("Rent not found"));
-        if (!rent.getUserId().equals(userId)) {
+        if (!rent.getUserId().equals(userId) && !isAdmin()) {
             throw new RuntimeException("Rent is not user's rent");
         }
-        if(rent.getDateFrom().isBefore(LocalDate.now())){
+        if (rent.getDateFrom().isBefore(LocalDate.now())) {
             throw new RuntimeException("You can't cancel rent that already started");
         }
 
         rentRepository.delete(rent);
     }
 
-    @SuppressWarnings("unchecked")
+    public List<RentResponseDto> userRents(UUID userId) {
+        if(!isAdmin()){
+            throw new RuntimeException("You must be admin to do that");
+        }
+        return rentRepository.findRentsByUserId(userId)
+                .stream().filter(it -> it.getUserId().equals(userId))
+                .map(it -> RentResponseDto.builder()
+                        .id(it.getId())
+                        .dateFrom(it.getDateFrom())
+                        .dateTo(it.getDateTo())
+                        .amountToPay(it.getAmountToPay())
+                        .userId(it.getUserId())
+                        .carId(it.getId())
+                        .build())
+                .toList();
+    }
+
+    private boolean isAdmin() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(i -> i.getAuthority().equals("ADMIN"));
+    }
+
     private UUID getUserId() {
         var id = SecurityContextHolder.getContext().getAuthentication().getName();
         return UUID.fromString(id);

@@ -25,13 +25,19 @@ public class RentsEndpoint {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<RentResponseDto>> getUserRents() {
-        return ResponseEntity.ok(rentsService.userRents());
+    public ResponseEntity<List<RentResponseDto>> getRents() {
+        return ResponseEntity.ok(rentsService.rents());
     }
 
     @PostMapping("/{rentId}/cancel")
     public ResponseEntity<Void> cancelRent(@PathVariable UUID rentId) {
         rentsService.cancelRent(rentId);
         return ResponseEntity.ok().build();
+    }
+
+    //ADMIN
+    @GetMapping("/all/{userId}")
+    public ResponseEntity<List<RentResponseDto>> getUserRents(@PathVariable UUID userId) {
+        return ResponseEntity.ok(rentsService.userRents(userId));
     }
 }

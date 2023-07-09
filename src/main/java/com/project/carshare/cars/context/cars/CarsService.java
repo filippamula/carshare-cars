@@ -22,10 +22,6 @@ public class CarsService {
     private final CarsRepository carsRepository;
     private final CarImageRepository carImageRepository;
 
-    private boolean isAdmin() {
-        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(i -> i.getAuthority().equals("ADMIN"));
-    }
-
     public List<CarInfoResponseDto> getAvailableCars() {
         return carsRepository.findAll().stream().filter(Car::isAvailable)
                 .map(it -> CarInfoResponseDto.builder()
@@ -43,6 +39,7 @@ public class CarsService {
     }
 
     //ADMIN
+
     public List<CarInfoResponseDto> getAllCars() {
         if (!isAdmin()) {
             throw new RuntimeException("You must be admin to do that");
@@ -61,7 +58,6 @@ public class CarsService {
                         .build())
                 .toList();
     }
-
     public void addCar(CarRequestDto request) {
         if (!isAdmin()) {
             throw new RuntimeException("You must be admin to do that");
@@ -128,6 +124,10 @@ public class CarsService {
 
         car.setAvailable(true);
         carsRepository.save(car);
+    }
+
+    private boolean isAdmin() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(i -> i.getAuthority().equals("ADMIN"));
     }
 
     private byte[] extractBytes(MultipartFile file) {
