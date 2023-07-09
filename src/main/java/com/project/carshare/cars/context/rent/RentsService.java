@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +43,9 @@ public class RentsService {
         var rent = Rent.builder()
                 .dateFrom(request.getDateFrom())
                 .dateTo(request.getDateTo())
-                .amountToPay(BigDecimal.valueOf(100)) //TODO impl
+                .amountToPay(car.getPricePerDay()
+                        .multiply(BigDecimal.valueOf(Duration
+                                .between(request.getDateFrom().atStartOfDay(), request.getDateTo().atStartOfDay()).toDays())))
                 .userId(userId)
                 .car(car)
                 .build();
