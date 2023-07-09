@@ -1,7 +1,7 @@
 package com.project.carshare.cars.context.cars;
 
-import com.project.carshare.cars.context.cars.dto.CarRequestDto;
 import com.project.carshare.cars.context.cars.dto.CarInfoResponseDto;
+import com.project.carshare.cars.context.cars.dto.CarRequestDto;
 import com.project.carshare.cars.domain.Car;
 import com.project.carshare.cars.domain.CarImage;
 import com.project.carshare.cars.domain.CarImageRepository;
@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -23,11 +22,8 @@ public class CarsService {
     private final CarsRepository carsRepository;
     private final CarImageRepository carImageRepository;
 
-    @SuppressWarnings("unchecked")
     private boolean isAdmin() {
-        return ((Map<String, String>) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
-                .get("role")
-                .equals("ADMIN");
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(i -> i.getAuthority().equals("ADMIN"));
     }
 
     public List<CarInfoResponseDto> getAvailableCars() {

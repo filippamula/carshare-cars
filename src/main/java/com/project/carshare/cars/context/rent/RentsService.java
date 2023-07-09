@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -83,7 +82,7 @@ public class RentsService {
 
     @SuppressWarnings("unchecked")
     private UUID getUserId() {
-        var id = ((Map<String, String>) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).get("userId");
+        var id = SecurityContextHolder.getContext().getAuthentication().getName();
         return UUID.fromString(id);
     }
 }
