@@ -39,11 +39,6 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String extractRole(String token) {
-        var claims = extractAllClaims(token);
-        return claims.get("role").toString();
-    }
-
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
