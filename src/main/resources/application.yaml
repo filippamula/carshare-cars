@@ -3,8 +3,12 @@ server:
     include-message: always
     include-binding-errors: always
   port: 8019
+  servlet:
+    context-path: /v1/api/cars/
 
 spring:
+  application:
+    name: carshare-cars-service
   datasource:
     password: toor
     url: jdbc:postgresql://localhost:5432/carshare
@@ -17,5 +21,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8888/eureka
 
 secret: "b2NjdXJjb29raWVzc3Rvb2Rwcm9iYWJseWNsb3RoZXNzdXBwZXJjYXJlZnVsbHljb3I="

@@ -35,7 +35,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         var webClient = WebClient.builder()
-                .baseUrl("http://localhost:8080/v1/user/auth/internal/verify")
+                .baseUrl("http://localhost:8080/v1/api/user/auth/internal/verify")
                 .defaultHeader(AUTHORIZATION, authHeader)
                 .build()
                 .method(HttpMethod.POST)
