@@ -1,11 +1,13 @@
 package com.project.carshare.cars.configuration.security;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -41,7 +43,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 .method(HttpMethod.POST)
                 .retrieve();
 
-        var clientResponse = Objects.requireNonNull(webClient.toBodilessEntity().block());
+        ResponseEntity clientResponse;
+        try {
+            clientResponse = Objects.requireNonNull(webClient.toBodilessEntity().block());
+        }catch (Exception ex){
+            throw new JwtException("Invalid token");
+        }
         if (clientResponse.getStatusCode().is2xxSuccessful()){
             SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(authHeader.substring(7)));
         }
